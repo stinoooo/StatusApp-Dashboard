@@ -7,14 +7,14 @@ require('dotenv').config();
 
 // Route to redirect to the Discord OAuth URL
 router.get('/discord', (req, res) => {
-    const discordOAuthURL = `https://discord.com/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.DISCORD_REDIRECT_URI)}&response_type=code&scope=identify guilds email applications.commands.permissions.update`;
+    const discordOAuthURL = `https://discord.com/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.DISCORD_REDIRECT_URI)}&response_type=code&scope=identify guilds email applications.commands.permissions.update&prompt=none`;
     res.redirect(discordOAuthURL);
 });
 
-// Callback after Discord OAuth
-router.get('/discord/callback', async (req, res) => {
+// Callback handling for OAuth2
+router.get('/', async (req, res) => {
     const { code } = req.query;
-    if (!code) return res.status(400).send("No code provided");
+    if (!code) return res.render('unauthorized', { message: "No code provided from Discord authorization." });
 
     try {
         // Exchange code for access token
@@ -41,22 +41,20 @@ router.get('/discord/callback', async (req, res) => {
 
         const targetGuild = guildsResponse.data.find(guild => guild.id === process.env.GUILD_ID);
         if (!targetGuild) {
-            return res.status(403).render('unauthorized', { message: "User is not part of the required guild." });
+            return res.render('unauthorized', { message: "User is not part of the required guild." });
         }
 
-        // Fetch member info for permissions
         const memberResponse = await axios.get(`https://discord.com/api/guilds/${targetGuild.id}/members/${userResponse.data.id}`, {
             headers: { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}` }
         });
 
         const permissions = BigInt(memberResponse.data.permissions);
 
-        // Check if user has MODERATE_MEMBERS permission for access
+        // Check if user has MODERATE_MEMBERS permission
         if (!hasPermission(permissions, PERMISSIONS.MODERATE_MEMBERS)) {
-            return res.status(403).render('unauthorized', { message: "You do not have permission to access this dashboard." });
+            return res.render('unauthorized', { message: "You do not have permission to access this dashboard." });
         }
 
-        // Store user data and permissions for frontend feature access
         req.session.user = {
             ...userResponse.data,
             permissions,
@@ -64,7 +62,7 @@ router.get('/discord/callback', async (req, res) => {
         res.redirect('/dashboard');
     } catch (error) {
         console.error("Authentication failed:", error.message);
-        res.status(500).send("Authentication failed");
+        res.render('unauthorized', { message: "Authentication failed. Please try again or contact support." });
     }
 });
 
