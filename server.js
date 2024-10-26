@@ -2,7 +2,7 @@
 const express = require('express');
 const session = require('express-session');
 const dotenv = require('dotenv');
-const RedisStore = require('connect-redis').default; // Updated to use the `default` export
+const RedisStore = require('connect-redis').default;
 const { createClient } = require('redis');
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
@@ -37,7 +37,7 @@ redisClient.connect().catch(console.error);
 
 // Session configuration using Redis store
 app.use(session({
-    store: new RedisStore({ client: redisClient }),  // Updated session store configuration
+    store: new RedisStore({ client: redisClient }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -47,14 +47,14 @@ app.use(session({
     }
 }));
 
+// Root route - renders the landing page (index.ejs)
+app.get('/', (req, res) => {
+    res.render('index');  // Renders the landing page instead of redirecting
+});
+
 // Routes
 app.use('/auth', authRoutes);
 app.use('/dashboard', dashboardRoutes);
-
-// Redirect root to login page
-app.get('/', (req, res) => {
-    res.redirect('/auth/discord');
-});
 
 // Start Server
 app.listen(PORT, () => {
