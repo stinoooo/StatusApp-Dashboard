@@ -5,10 +5,10 @@ const axios = require('axios');
 const { PERMISSIONS, hasPermission } = require('../utils/permissions');
 require('dotenv').config();
 
-// Redirect to Discord OAuth
+// Route to redirect to the Discord OAuth URL
 router.get('/discord', (req, res) => {
-    const redirectUri = `https://discord.com/oauth2/authorize?client_id=1299719074581975141&response_type=code&redirect_uri=https%3A%2F%2Fstatus-dashboard.up.railway.app%2Fauth%2Fdiscord%2Fcallback&scope=identify+guilds+email+applications.commands.permissions.update`;
-    res.redirect(redirectUri);
+    const discordOAuthURL = `https://discord.com/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.DISCORD_REDIRECT_URI)}&response_type=code&scope=identify guilds email applications.commands.permissions.update`;
+    res.redirect(discordOAuthURL);
 });
 
 // Callback after Discord OAuth
@@ -63,7 +63,7 @@ router.get('/discord/callback', async (req, res) => {
         };
         res.redirect('/dashboard');
     } catch (error) {
-        console.error(error);
+        console.error("Authentication failed:", error.message);
         res.status(500).send("Authentication failed");
     }
 });

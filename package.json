@@ -24,7 +24,8 @@
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "mysql2": "^3.6.0",
-    "redis": "^4.6.5"
+    "redis": "^4.6.5",
+    "status-dashboard": "file:"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
