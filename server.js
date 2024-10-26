@@ -2,7 +2,7 @@
 const express = require('express');
 const session = require('express-session');
 const dotenv = require('dotenv');
-const RedisStore = require('connect-redis')(session);
+const RedisStore = require('connect-redis').default; // Updated to use the `default` export
 const { createClient } = require('redis');
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Configure Redis client with Railway's REDIS_URL
 const redisClient = createClient({
-    url: process.env.REDIS_URL, // Uses Railway's Redis URL environment variable
+    url: process.env.REDIS_URL,
 });
 
 redisClient.on('error', (err) => console.error('Redis connection error:', err));
@@ -37,13 +37,13 @@ redisClient.connect().catch(console.error);
 
 // Session configuration using Redis store
 app.use(session({
-    store: new RedisStore({ client: redisClient }),
+    store: new RedisStore({ client: redisClient }),  // Updated session store configuration
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: process.env.NODE_ENV === 'production', // Secure cookies in production (HTTPS)
-        maxAge: 1000 * 60 * 60 * 24 // Session expiration set to 1 day
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 1000 * 60 * 60 * 24 // 1 day
     }
 }));
 
