@@ -15,11 +15,8 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
     <link rel="manifest" href="/favicons/site.webmanifest">
 
-    <!-- Custom style for the dot background -->
+    <!-- Custom style for dot background -->
     <style>
-        body, html {
-            overflow: hidden;
-        }
         #backgroundCanvas {
             position: fixed;
             top: 0;
@@ -35,37 +32,60 @@
     </style>
 </head>
 
-<body class="bg-gray-100 min-h-screen">
-
+<body class="bg-gray-100 flex flex-col items-center min-h-screen">
     <!-- Animated background canvas -->
     <canvas id="backgroundCanvas"></canvas>
 
-    <!-- Header with title and login button -->
-    <header class="content-container flex justify-between items-center p-6 bg-transparent text-white">
-        <h1 class="text-xl font-semibold">Status Dashboard</h1>
-        <a href="/auth/discord" class="ios-button bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-full px-4 py-2 shadow-lg">
+    <!-- Header/Navbar -->
+    <header class="content-container w-full flex justify-between items-center p-6 shadow-md bg-transparent fixed top-0">
+        <h1 class="text-3xl font-semibold text-white">Status Dashboard</h1>
+        <a href="/auth/discord" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-full px-6 py-3 shadow-lg">
             Login with Discord
         </a>
     </header>
 
-    <!-- Main content -->
-    <main class="content-container flex flex-col items-center justify-center min-h-screen p-6 text-center space-y-16">
-        <!-- Welcome Section -->
-        <section class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Welcome to the Status Dashboard</h2>
-            <p class="text-gray-600 mb-6">Log in to manage server settings and moderation.</p>
-            <a href="/auth/discord" class="ios-button bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-full px-6 py-3 shadow-lg">
+    <!-- Welcome Section -->
+    <section class="content-container flex items-center justify-center min-h-screen text-center pt-24 pb-12 px-6">
+        <div class="max-w-lg mx-auto">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">Welcome to the Status Dashboard</h1>
+            <p class="text-gray-300 mb-8 text-lg">Your ultimate tool for server moderation and community management.</p>
+            <a href="/auth/discord" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-full px-8 py-4 shadow-lg">
                 Login with Discord
             </a>
-        </section>
+        </div>
+    </section>
 
-        <!-- About Section -->
-        <section class="max-w-3xl text-gray-200">
-            <h2 class="text-2xl font-semibold mb-4">About This Dashboard</h2>
-            <p class="mb-4">The Status Dashboard provides server admins and moderators with tools to manage and monitor their Discord servers effectively. With features for managing roles, viewing moderation logs, and handling user appeals, this platform empowers you to keep your community safe and organized.</p>
-            <a href="https://discord.gg/statusgame" class="text-blue-400 hover:text-blue-500 underline">Join Our Discord Server</a>
-        </section>
-    </main>
+    <!-- About Section -->
+    <section class="content-container py-20 px-6 bg-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Why Choose Our Dashboard?</h2>
+            <p class="text-gray-600 mb-10">
+                Designed for server admins and moderators to streamline tasks and improve community management.
+            </p>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="p-6 bg-gray-100 rounded-lg shadow-lg text-center">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Real-Time Monitoring</h3>
+                    <p class="text-gray-600">Track server activities and stay updated with real-time logs and actions.</p>
+                </div>
+                <div class="p-6 bg-gray-100 rounded-lg shadow-lg text-center">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Comprehensive Tools</h3>
+                    <p class="text-gray-600">Access moderation, permissions management, and more in one place.</p>
+                </div>
+                <div class="p-6 bg-gray-100 rounded-lg shadow-lg text-center">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Seamless Integration</h3>
+                    <p class="text-gray-600">Integrated directly with Discord for a seamless moderation experience.</p>
+                </div>
+                <div class="p-6 bg-gray-100 rounded-lg shadow-lg text-center">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Join Our Community</h3>
+                    <p class="text-gray-600">Get support and engage in discussions with other users.</p>
+                    <a href="https://discord.gg/statusgame" 
+                       class="inline-block mt-4 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-medium rounded-full px-6 py-2 shadow-lg">
+                       Join Our Discord
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Script for animated dots background -->
     <script>
@@ -73,7 +93,7 @@
         const ctx = canvas.getContext('2d');
 
         let dots = [];
-        const dotCount = 50; // Number of dots
+        const dotCount = 50;
         const dotRadius = 2.5;
         const dotSpeed = 0.2;
 
@@ -131,4 +151,5 @@
         });
     </script>
 </body>
+
 </html>
