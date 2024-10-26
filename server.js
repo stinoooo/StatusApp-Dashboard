@@ -28,6 +28,10 @@ app.use(express.urlencoded({ extended: true }));
 const redisClient = createClient({
     url: process.env.REDIS_URL, // Uses Railway's Redis URL environment variable
 });
+
+redisClient.on('error', (err) => console.error('Redis connection error:', err));
+redisClient.on('connect', () => console.log('Connected to Redis'));
+
 redisClient.connect().catch(console.error);
 
 // Session configuration using Redis store
