@@ -47,14 +47,26 @@ app.use(session({
     }
 }));
 
-// Root route - renders the landing page (index.ejs)
+// Root route - checks if user is authenticated, then redirects or renders index
 app.get('/', (req, res) => {
-    res.render('index'); // Render the index page directly
+    if (req.session.user) {
+        res.redirect('/dashboard'); // Redirect authenticated users to dashboard
+    } else {
+        res.render('index'); // Render the landing page for unauthenticated users
+    }
 });
 
 // Routes for authentication and dashboard
 app.use('/auth', authRoutes);
 app.use('/dashboard', dashboardRoutes);
+
+// Handle unauthorized access to /dashboard and redirect to home
+app.use((req, res, next) => {
+    if (!req.session.user && req.path.startsWith('/dashboard')) {
+        return res.redirect('/'); // Redirect to landing if trying to access restricted routes
+    }
+    next();
+});
 
 // Start the server
 app.listen(PORT, () => {

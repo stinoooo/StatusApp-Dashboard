@@ -5,6 +5,15 @@ const axios = require('axios');
 const { PERMISSIONS, hasPermission } = require('../utils/permissions');
 require('dotenv').config();
 
+// Middleware to check if the user is authenticated
+function isAuthenticated(req, res, next) {
+    if (req.session.user) {
+        next();
+    } else {
+        res.redirect('/'); // Redirect to homepage if not authenticated
+    }
+}
+
 // Route to redirect to the Discord OAuth URL
 router.get('/discord', (req, res) => {
     const discordOAuthURL = `https://discord.com/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.DISCORD_REDIRECT_URI)}&response_type=code&scope=identify guilds email applications.commands.permissions.update&prompt=none`;
@@ -55,6 +64,7 @@ router.get('/', async (req, res) => {
             return res.render('unauthorized', { message: "You do not have permission to access this dashboard." });
         }
 
+        // Store user data in session after successful login
         req.session.user = {
             ...userResponse.data,
             permissions,
@@ -66,4 +76,4 @@ router.get('/', async (req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = { router, isAuthenticated };

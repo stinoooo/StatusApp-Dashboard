@@ -5,15 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    
+
     <!-- Tailwind CSS and custom styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <link rel="stylesheet" href="/css/styles.css">
-    
+
     <!-- Favicon Links -->
     <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
     <link rel="manifest" href="/favicons/site.webmanifest">
 
     <!-- Custom style for dot background -->
@@ -34,56 +33,97 @@
 </head>
 
 <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
+    <!-- OAuth Check Script -->
+    <script>
+        if (!<%= JSON.stringify(user) %>) {
+            window.location.href = "/";
+        }
+    </script>
+
     <!-- Animated background canvas -->
     <canvas id="backgroundCanvas"></canvas>
 
     <!-- Header/Navbar -->
-    <header class="content-container bg-transparent fixed top-0 left-0 right-0 flex justify-between items-center p-6 shadow-lg">
-        <h1 class="text-2xl font-semibold text-white">Status Dashboard</h1>
+    <header class="content-container bg-transparent fixed top-0 left-0 right-0 flex items-center justify-between p-6 shadow-lg">
+        <div class="flex items-center">
+            <a href="/index" class="flex items-center">
+                <img src="/public/images/statuslogo.png" alt="Status Logo" class="h-10 mr-4">
+                <span class="text-2xl font-semibold text-white">Status Dashboard</span>
+            </a>
+        </div>
         <div class="flex items-center space-x-4">
             <p class="text-white hidden md:block">Welcome, <%= user.username %>!</p>
-            <a href="/" class="bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-full px-4 py-2 shadow-md">
+            <a href="/index" class="bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-full px-4 py-2 shadow-md">
                 Logout
             </a>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="content-container flex-grow mt-24 max-w-4xl mx-auto p-4 sm:p-8 space-y-10">
+    <main class="content-container flex-grow mt-24 max-w-6xl mx-auto p-4 sm:p-8 space-y-10">
         <!-- Permissions Overview -->
         <section class="mb-8">
-            <h2 class="text-xl font-bold mb-4 text-white">Permissions Overview</h2>
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <ul class="space-y-3">
-                    <% if (user.permissions & PERMISSIONS.BAN_MEMBERS) { %>
-                        <li class="text-green-600 font-medium">Permission to ban members.</li>
-                    <% } else { %>
-                        <li class="text-red-600 font-medium">No permission to ban members.</li>
-                    <% } %>
+            <h2 class="text-3xl font-bold mb-4 text-white">Your Permissions</h2>
+            <div class="bg-white rounded-lg shadow-md p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="p-4 rounded-lg bg-gray-50 shadow text-center">
+                    <h3 class="text-gray-700 font-semibold">Ban Members</h3>
+                    <p class="<%= (user.permissions & PERMISSIONS.BAN_MEMBERS) ? 'text-green-600' : 'text-red-600' %>">
+                        <%= (user.permissions & PERMISSIONS.BAN_MEMBERS) ? 'Allowed to ban users.' : 'No permission to ban members.' %>
+                    </p>
+                </div>
+                <div class="p-4 rounded-lg bg-gray-50 shadow text-center">
+                    <h3 class="text-gray-700 font-semibold">Manage Roles</h3>
+                    <p class="<%= (user.permissions & PERMISSIONS.MANAGE_ROLES) ? 'text-green-600' : 'text-red-600' %>">
+                        <%= (user.permissions & PERMISSIONS.MANAGE_ROLES) ? 'Allowed to assign or change roles.' : 'No permission to manage roles.' %>
+                    </p>
+                </div>
+                <div class="p-4 rounded-lg bg-gray-50 shadow text-center">
+                    <h3 class="text-gray-700 font-semibold">View Audit Log</h3>
+                    <p class="<%= (user.permissions & PERMISSIONS.VIEW_AUDIT_LOG) ? 'text-green-600' : 'text-red-600' %>">
+                        <%= (user.permissions & PERMISSIONS.VIEW_AUDIT_LOG) ? 'Access to view server actions.' : 'No permission to view the audit log.' %>
+                    </p>
+                </div>
+                <!-- Add additional permissions as needed -->
+            </div>
+        </section>
 
-                    <% if (user.permissions & PERMISSIONS.MANAGE_ROLES) { %>
-                        <li class="text-green-600 font-medium">Permission to manage roles.</li>
-                    <% } else { %>
-                        <li class="text-red-600 font-medium">No permission to manage roles.</li>
-                    <% } %>
-
-                    <% if (user.permissions & PERMISSIONS.VIEW_AUDIT_LOG) { %>
-                        <li class="text-green-600 font-medium">Permission to view audit log.</li>
-                    <% } else { %>
-                        <li class="text-red-600 font-medium">No permission to view audit log.</li>
-                    <% } %>
-                </ul>
+        <!-- Advanced Search and Filter Section -->
+        <section class="mb-8">
+            <h2 class="text-3xl font-bold mb-4 text-white">Search & Filter Moderation Logs</h2>
+            <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+                <form id="filterForm" class="space-y-4">
+                    <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+                        <input type="text" id="filterUserId" placeholder="Moderator User ID" class="border border-gray-300 rounded px-4 py-2 w-full">
+                        <input type="text" id="filterTargetId" placeholder="Target User ID" class="border border-gray-300 rounded px-4 py-2 w-full">
+                        <input type="text" id="filterReason" placeholder="Reason" class="border border-gray-300 rounded px-4 py-2 w-full">
+                    </div>
+                    <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+                        <select id="filterAction" class="border border-gray-300 rounded px-4 py-2 w-full">
+                            <option value="">Select Action</option>
+                            <option value="mute">Mute</option>
+                            <option value="ban">Ban</option>
+                            <option value="kick">Kick</option>
+                            <option value="strike">Strike</option>
+                            <option value="pardon">Pardon</option>
+                        </select>
+                        <input type="date" id="filterDate" class="border border-gray-300 rounded px-4 py-2 w-full">
+                    </div>
+                    <button type="button" onclick="applyFilters()" class="bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-full px-6 py-2">
+                        Apply Filters
+                    </button>
+                </form>
             </div>
         </section>
 
         <!-- Moderation Logs Section -->
         <section class="mb-8">
-            <h2 class="text-xl font-bold mb-4 text-white">Moderation Logs</h2>
+            <h2 class="text-3xl font-bold mb-4 text-white">Moderation Logs</h2>
             <div class="bg-white rounded-lg shadow-md overflow-x-auto p-4">
-                <table class="w-full text-left">
+                <table id="logsTable" class="w-full text-left">
                     <thead>
                         <tr class="text-gray-600">
                             <th class="p-2 border-b font-medium">User ID</th>
+                            <th class="p-2 border-b font-medium">Target User ID</th>
                             <th class="p-2 border-b font-medium">Action</th>
                             <th class="p-2 border-b font-medium">Reason</th>
                             <th class="p-2 border-b font-medium">Date</th>
@@ -91,9 +131,10 @@
                     </thead>
                     <tbody>
                         <% logs.forEach(log => { %>
-                            <tr class="hover:bg-gray-50">
+                            <tr class="hover:bg-gray-50" data-userid="<%= log.userid %>" data-targetid="<%= log.targetid %>" data-action="<%= log.action %>" data-reason="<%= log.reason %>" data-date="<%= log.created.toISOString().split('T')[0] %>">
                                 <td class="p-2 border-b"><%= log.userid %></td>
-                                <td class="p-2 border-b"><%= log.action %></td>
+                                <td class="p-2 border-b"><%= log.targetid %></td>
+                                <td class="p-2 border-b capitalize"><%= log.action %></td>
                                 <td class="p-2 border-b"><%= log.reason %></td>
                                 <td class="p-2 border-b"><%= new Date(log.created).toLocaleString() %></td>
                             </tr>
@@ -102,28 +143,9 @@
                 </table>
             </div>
         </section>
-
-        <!-- Action Buttons Based on Permissions -->
-        <section class="flex flex-wrap space-x-4 mt-6">
-            <% if (user.permissions & PERMISSIONS.BAN_MEMBERS) { %>
-                <button class="ios-button bg-red-500 hover:bg-red-600 text-white rounded-full px-4 py-2 shadow-md mb-4">
-                    Ban Member
-                </button>
-            <% } %>
-            <% if (user.permissions & PERMISSIONS.MANAGE_ROLES) { %>
-                <button class="ios-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2 shadow-md mb-4">
-                    Manage Roles
-                </button>
-            <% } %>
-            <% if (user.permissions & PERMISSIONS.VIEW_AUDIT_LOG) { %>
-                <button class="ios-button bg-gray-500 hover:bg-gray-600 text-white rounded-full px-4 py-2 shadow-md mb-4">
-                    View Audit Log
-                </button>
-            <% } %>
-        </section>
     </main>
 
-    <!-- Script for animated dots background -->
+    <!-- Script for animated dots background and search/filter functionality -->
     <script>
         const canvas = document.getElementById('backgroundCanvas');
         const ctx = canvas.getContext('2d');
@@ -185,6 +207,37 @@
             resizeCanvas();
             initializeDots();
         });
+
+        // Filter function for logs
+        function applyFilters() {
+            const filterUserId = document.getElementById("filterUserId").value.trim().toLowerCase();
+            const filterTargetId = document.getElementById("filterTargetId").value.trim().toLowerCase();
+            const filterAction = document.getElementById("filterAction").value.toLowerCase();
+            const filterReason = document.getElementById("filterReason").value.trim().toLowerCase();
+            const filterDate = document.getElementById("filterDate").value;
+
+            const rows = document.querySelectorAll("#logsTable tbody tr");
+
+            rows.forEach(row => {
+                const userId = row.getAttribute("data-userid").toLowerCase();
+                const targetId = row.getAttribute("data-targetid").toLowerCase();
+                const action = row.getAttribute("data-action").toLowerCase();
+                const reason = row.getAttribute("data-reason").toLowerCase();
+                const date = row.getAttribute("data-date");
+
+                const matchUserId = !filterUserId || userId.includes(filterUserId);
+                const matchTargetId = !filterTargetId || targetId.includes(filterTargetId);
+                const matchAction = !filterAction || action === filterAction;
+                const matchReason = !filterReason || reason.includes(filterReason);
+                const matchDate = !filterDate || date === filterDate;
+
+                if (matchUserId && matchTargetId && matchAction && matchReason && matchDate) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
     </script>
 </body>
 
