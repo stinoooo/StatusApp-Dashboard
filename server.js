@@ -2,6 +2,8 @@
 const express = require('express');
 const session = require('express-session');
 const dotenv = require('dotenv');
+const RedisStore = require('connect-redis')(session);
+const { createClient } = require('redis');
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
 const db = require('./config/db');
@@ -22,11 +24,22 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Session for authentication
+// Configure Redis client with Railway's REDIS_URL
+const redisClient = createClient({
+    url: process.env.REDIS_URL, // Uses Railway's Redis URL environment variable
+});
+redisClient.connect().catch(console.error);
+
+// Session configuration using Redis store
 app.use(session({
+    store: new RedisStore({ client: redisClient }),
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    cookie: {
+        secure: false, // Set to `true` if using HTTPS in production
+        maxAge: 1000 * 60 * 60 * 24 // Session expiration set to 1 day
+    }
 }));
 
 // Routes
