@@ -8,10 +8,9 @@ require('dotenv').config();
 // Middleware to check if the user is authenticated
 function isAuthenticated(req, res, next) {
     if (req.session.user) {
-        next();
-    } else {
-        res.redirect('/'); // Redirect to homepage if not authenticated
+        return next();
     }
+    res.redirect('/'); // Redirect to homepage if not authenticated
 }
 
 // Route to redirect to the Discord OAuth URL
@@ -76,4 +75,4 @@ router.get('/', async (req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = { router, isAuthenticated };

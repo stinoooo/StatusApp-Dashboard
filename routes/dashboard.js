@@ -27,10 +27,12 @@ router.get('/', checkAuth, checkAuditLogPermission, async (req, res) => {
         const { userid, actionType, startDate, endDate, reason } = req.query;
 
         // Base SQL query for fetching moderation logs
-        let query = 'SELECT userid, action, reason, created FROM Moderation WHERE 1=1';
+        let query = 'SELECT userid, targetid, action, reason, created FROM Moderation WHERE 1=1';
         const queryParams = [];
 
-        // Filter by User ID
+        // Apply filtering conditions only if filters are provided
+
+        // Filter by User ID (moderator's ID)
         if (userid) {
             query += ' AND userid = ?';
             queryParams.push(userid);
@@ -48,19 +50,22 @@ router.get('/', checkAuth, checkAuditLogPermission, async (req, res) => {
             queryParams.push(`%${reason}%`);
         }
 
-        // Filter by date range
+        // Filter by start date
         if (startDate) {
             query += ' AND created >= ?';
             queryParams.push(new Date(startDate));
         }
+
+        // Filter by end date
         if (endDate) {
             query += ' AND created <= ?';
             queryParams.push(new Date(endDate));
         }
 
+        // Sort the logs by the creation date in descending order
         query += ' ORDER BY created DESC';
 
-        // Execute query and fetch logs
+        // Execute query with filters applied
         const [logs] = await db.query(query, queryParams);
 
         // Render dashboard page with user and log data
@@ -68,7 +73,7 @@ router.get('/', checkAuth, checkAuditLogPermission, async (req, res) => {
             user: req.session.user, 
             logs,
             PERMISSIONS,
-            filters: { userid, actionType, startDate, endDate, reason } // Pass filters back to view
+            filters: { userid, actionType, startDate, endDate, reason } // Pass filters back to view for display
         });
     } catch (error) {
         console.error("Error loading moderation logs:", error);
