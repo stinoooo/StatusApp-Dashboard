@@ -1,33 +1,78 @@
 <!-- views/dashboard.ejs -->
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/public/css/tailwind.css">
 </head>
-<body>
-    <div class="container">
-        <h1>Welcome, <%= user.username %>!</h1>
-        <h2>Moderation Logs</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>User ID</th>
-                    <th>Action</th>
-                    <th>Reason</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% logs.forEach(log => { %>
+<body class="bg-iosGray">
+    <header class="ios-navbar">
+        <h1 class="text-2xl font-semibold">Dashboard</h1>
+        <p>Welcome, <%= user.username %>!</p>
+    </header>
+    
+    <main class="max-w-4xl mx-auto p-4 sm:p-8">
+        <!-- Permissions Overview -->
+        <h2 class="text-xl font-bold mb-4 text-iosDark">Permissions Overview</h2>
+        <div class="ios-card">
+            <ul class="space-y-2">
+                <% if (user.permissions & PERMISSIONS.BAN_MEMBERS) { %>
+                    <li class="text-green-500 font-medium">Permission to ban members.</li>
+                <% } else { %>
+                    <li class="text-red-500 font-medium">No permission to ban members.</li>
+                <% } %>
+                <% if (user.permissions & PERMISSIONS.MANAGE_ROLES) { %>
+                    <li class="text-green-500 font-medium">Permission to manage roles.</li>
+                <% } else { %>
+                    <li class="text-red-500 font-medium">No permission to manage roles.</li>
+                <% } %>
+                <% if (user.permissions & PERMISSIONS.VIEW_AUDIT_LOG) { %>
+                    <li class="text-green-500 font-medium">Permission to view audit log.</li>
+                <% } else { %>
+                    <li class="text-red-500 font-medium">No permission to view audit log.</li>
+                <% } %>
+            </ul>
+        </div>
+
+        <!-- Moderation Logs Section -->
+        <h2 class="text-xl font-bold mt-8 mb-4 text-iosDark">Moderation Logs</h2>
+        <div class="ios-card overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
                     <tr>
-                        <td><%= log.userid %></td>
-                        <td><%= log.action %></td>
-                        <td><%= log.reason %></td>
-                        <td><%= new Date(log.created).toLocaleString() %></td>
+                        <th class="p-2 border-b">User ID</th>
+                        <th class="p-2 border-b">Action</th>
+                        <th class="p-2 border-b">Reason</th>
+                        <th class="p-2 border-b">Date</th>
                     </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    <% logs.forEach(log => { %>
+                        <tr>
+                            <td class="p-2 border-b"><%= log.userid %></td>
+                            <td class="p-2 border-b"><%= log.action %></td>
+                            <td class="p-2 border-b"><%= log.reason %></td>
+                            <td class="p-2 border-b"><%= new Date(log.created).toLocaleString() %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Action Buttons Based on Permissions -->
+        <div class="flex space-x-4 mt-6">
+            <% if (user.permissions & PERMISSIONS.BAN_MEMBERS) { %>
+                <button class="ios-button bg-red-500 hover:bg-red-600">Ban Member</button>
+            <% } %>
+            <% if (user.permissions & PERMISSIONS.MANAGE_ROLES) { %>
+                <button class="ios-button bg-blue-500 hover:bg-blue-600">Manage Roles</button>
+            <% } %>
+            <% if (user.permissions & PERMISSIONS.VIEW_AUDIT_LOG) { %>
+                <button class="ios-button bg-gray-500 hover:bg-gray-600">View Audit Log</button>
+            <% } %>
+        </div>
+    </main>
 </body>
 </html>

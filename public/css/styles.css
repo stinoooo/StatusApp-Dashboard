@@ -1,49 +1,30 @@
 /* public/css/styles.css */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-    margin: 0;
-    padding: 0;
+
+/* Import Tailwind's base styles, components, and utilities */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom iOS-inspired styles */
+
+/* Navbar styling for an iOS look */
+.ios-navbar {
+    @apply bg-iosGray text-iosDark shadow-lg py-4 text-center;
 }
 
-.container {
-    max-width: 800px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+/* Buttons styled with an iOS-inspired look */
+.ios-button {
+    @apply text-white bg-iosBlue rounded-lg px-4 py-2 shadow-md transition-colors duration-200;
 }
 
-h1, h2 {
-    color: #333;
+/* Card styling */
+.ios-card {
+    @apply bg-iosLight shadow-md rounded-lg p-4 mb-4;
 }
 
-.btn {
-    display: inline-block;
-    padding: 10px 20px;
-    color: #fff;
-    background-color: #7289da;
-    border-radius: 5px;
-    text-decoration: none;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-table, th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-
-th {
-    background-color: #7289da;
-    color: white;
-}
-
-td {
-    text-align: center;
-}
+/* Custom color and font configurations */
+.text-iosGray { color: #f2f2f7; }
+.bg-iosGray { background-color: #f2f2f7; }
+.bg-iosBlue { background-color: #007aff; }
+.text-iosDark { color: #1c1c1e; }
+.bg-iosLight { background-color: #ffffff; }

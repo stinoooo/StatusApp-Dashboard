@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3000;
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Serve static files from public folder
+// Serve static files from the public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware to handle JSON data
@@ -32,6 +32,7 @@ const redisClient = createClient({
 redisClient.on('error', (err) => console.error('Redis connection error:', err));
 redisClient.on('connect', () => console.log('Connected to Redis'));
 
+// Connect to Redis
 redisClient.connect().catch(console.error);
 
 // Session configuration using Redis store
@@ -41,7 +42,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false, // Set to `true` if using HTTPS in production
+        secure: process.env.NODE_ENV === 'production', // Secure cookies in production (HTTPS)
         maxAge: 1000 * 60 * 60 * 24 // Session expiration set to 1 day
     }
 }));
@@ -57,5 +58,5 @@ app.get('/', (req, res) => {
 
 // Start Server
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });

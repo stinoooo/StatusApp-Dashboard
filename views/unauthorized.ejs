@@ -1,13 +1,21 @@
 <!-- views/unauthorized.ejs -->
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Access Denied</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/public/css/tailwind.css">
 </head>
-<body>
-    <div class="container">
-        <h1>Access Denied</h1>
-        <p>You do not have the necessary permissions to access this dashboard.</p>
+<body class="bg-iosGray flex items-center justify-center min-h-screen">
+    <div class="text-center max-w-md mx-auto">
+        <h1 class="text-4xl font-bold text-iosDark mb-4">Access Denied</h1>
+        <p class="text-gray-600 mb-6">You do not have the necessary permissions to access this dashboard.</p>
+        
+        <!-- Button to return home -->
+        <a href="/" class="ios-button bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded-lg shadow-lg">
+            Go Home
+        </a>
     </div>
 </body>
 </html>
