@@ -1,30 +1,23 @@
 /* public/css/styles.css */
 
-/* Import Tailwind's base styles, components, and utilities */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Custom iOS-inspired styles */
-
-/* Navbar styling for an iOS look */
-.ios-navbar {
-    @apply bg-iosGray text-iosDark shadow-lg py-4 text-center;
-}
-
-/* Buttons styled with an iOS-inspired look */
+/* Fully rounded button style for a more pronounced iOS feel */
 .ios-button {
-    @apply text-white bg-iosBlue rounded-lg px-4 py-2 shadow-md transition-colors duration-200;
+    border-radius: 9999px;
+    transition: background-color 0.2s ease;
 }
 
-/* Card styling */
-.ios-card {
-    @apply bg-iosLight shadow-md rounded-lg p-4 mb-4;
+/* Subtle hover effect */
+.ios-button:hover {
+    transform: scale(1.02);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Custom color and font configurations */
-.text-iosGray { color: #f2f2f7; }
-.bg-iosGray { background-color: #f2f2f7; }
-.bg-iosBlue { background-color: #007aff; }
-.text-iosDark { color: #1c1c1e; }
-.bg-iosLight { background-color: #ffffff; }
+/* Dark gray for iOS-like text styling */
+.text-iosDark {
+    color: #1e293b;
+}
+
+/* Light gray background for iOS-like screens */
+.bg-iosGray {
+    background-color: #f3f4f6;
+}

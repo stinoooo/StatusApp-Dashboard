@@ -6,88 +6,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="/css/tailwind.css">
+    
+    <!-- Tailwind CDN and custom styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    
+    <!-- Favicon Links -->
     <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
     <link rel="manifest" href="/favicons/site.webmanifest">
 </head>
 
-<body class="bg-iosGray">
-    <header class="ios-navbar">
-        <h1 class="text-2xl font-semibold">Dashboard</h1>
-        <p>Welcome, <%= user.username %>!</p>
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow-md p-4 flex justify-between items-center">
+        <h1 class="text-2xl font-semibold text-gray-800">Dashboard</h1>
+        <p class="text-gray-600">Welcome, <%= user.username %>!</p>
     </header>
 
-    <main class="max-w-4xl mx-auto p-4 sm:p-8">
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl mx-auto p-4 sm:p-8">
         <!-- Permissions Overview -->
-        <h2 class="text-xl font-bold mb-4 text-iosDark">Permissions Overview</h2>
-        <div class="ios-card">
-            <ul class="space-y-2">
-                <% if (user.permissions & PERMISSIONS.BAN_MEMBERS) { %>
-                    <li class="text-green-500 font-medium">Permission to ban members.</li>
+        <section class="mb-8">
+            <h2 class="text-xl font-bold mb-4 text-gray-700">Permissions Overview</h2>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <ul class="space-y-3">
+                    <% if (user.permissions & PERMISSIONS.BAN_MEMBERS) { %>
+                        <li class="text-green-600 font-medium">Permission to ban members.</li>
                     <% } else { %>
-                        <li class="text-red-500 font-medium">No permission to ban members.</li>
-                        <% } %>
-                            <% if (user.permissions & PERMISSIONS.MANAGE_ROLES) { %>
-                                <li class="text-green-500 font-medium">Permission to manage roles.</li>
-                                <% } else { %>
-                                    <li class="text-red-500 font-medium">No permission to manage roles.</li>
-                                    <% } %>
-                                        <% if (user.permissions & PERMISSIONS.VIEW_AUDIT_LOG) { %>
-                                            <li class="text-green-500 font-medium">Permission to view audit log.</li>
-                                            <% } else { %>
-                                                <li class="text-red-500 font-medium">No permission to view audit log.
-                                                </li>
-                                                <% } %>
-            </ul>
-        </div>
+                        <li class="text-red-600 font-medium">No permission to ban members.</li>
+                    <% } %>
+
+                    <% if (user.permissions & PERMISSIONS.MANAGE_ROLES) { %>
+                        <li class="text-green-600 font-medium">Permission to manage roles.</li>
+                    <% } else { %>
+                        <li class="text-red-600 font-medium">No permission to manage roles.</li>
+                    <% } %>
+
+                    <% if (user.permissions & PERMISSIONS.VIEW_AUDIT_LOG) { %>
+                        <li class="text-green-600 font-medium">Permission to view audit log.</li>
+                    <% } else { %>
+                        <li class="text-red-600 font-medium">No permission to view audit log.</li>
+                    <% } %>
+                </ul>
+            </div>
+        </section>
 
         <!-- Moderation Logs Section -->
-        <h2 class="text-xl font-bold mt-8 mb-4 text-iosDark">Moderation Logs</h2>
-        <div class="ios-card overflow-x-auto">
-            <table class="w-full text-left">
-                <thead>
-                    <tr>
-                        <th class="p-2 border-b">User ID</th>
-                        <th class="p-2 border-b">Action</th>
-                        <th class="p-2 border-b">Reason</th>
-                        <th class="p-2 border-b">Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% logs.forEach(log=> { %>
-                        <tr>
-                            <td class="p-2 border-b">
-                                <%= log.userid %>
-                            </td>
-                            <td class="p-2 border-b">
-                                <%= log.action %>
-                            </td>
-                            <td class="p-2 border-b">
-                                <%= log.reason %>
-                            </td>
-                            <td class="p-2 border-b">
-                                <%= new Date(log.created).toLocaleString() %>
-                            </td>
+        <section class="mb-8">
+            <h2 class="text-xl font-bold mb-4 text-gray-700">Moderation Logs</h2>
+            <div class="bg-white rounded-lg shadow-md overflow-x-auto p-4">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-gray-600">
+                            <th class="p-2 border-b font-medium">User ID</th>
+                            <th class="p-2 border-b font-medium">Action</th>
+                            <th class="p-2 border-b font-medium">Reason</th>
+                            <th class="p-2 border-b font-medium">Date</th>
                         </tr>
+                    </thead>
+                    <tbody>
+                        <% logs.forEach(log => { %>
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-2 border-b"><%= log.userid %></td>
+                                <td class="p-2 border-b"><%= log.action %></td>
+                                <td class="p-2 border-b"><%= log.reason %></td>
+                                <td class="p-2 border-b"><%= new Date(log.created).toLocaleString() %></td>
+                            </tr>
                         <% }) %>
-                </tbody>
-            </table>
-        </div>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
         <!-- Action Buttons Based on Permissions -->
-        <div class="flex space-x-4 mt-6">
+        <section class="flex space-x-4 mt-6">
             <% if (user.permissions & PERMISSIONS.BAN_MEMBERS) { %>
-                <button class="ios-button bg-red-500 hover:bg-red-600">Ban Member</button>
-                <% } %>
-                    <% if (user.permissions & PERMISSIONS.MANAGE_ROLES) { %>
-                        <button class="ios-button bg-blue-500 hover:bg-blue-600">Manage Roles</button>
-                        <% } %>
-                            <% if (user.permissions & PERMISSIONS.VIEW_AUDIT_LOG) { %>
-                                <button class="ios-button bg-gray-500 hover:bg-gray-600">View Audit Log</button>
-                                <% } %>
-        </div>
+                <button class="ios-button bg-red-500 hover:bg-red-600 text-white rounded-full px-4 py-2 shadow-md">
+                    Ban Member
+                </button>
+            <% } %>
+            <% if (user.permissions & PERMISSIONS.MANAGE_ROLES) { %>
+                <button class="ios-button bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2 shadow-md">
+                    Manage Roles
+                </button>
+            <% } %>
+            <% if (user.permissions & PERMISSIONS.VIEW_AUDIT_LOG) { %>
+                <button class="ios-button bg-gray-500 hover:bg-gray-600 text-white rounded-full px-4 py-2 shadow-md">
+                    View Audit Log
+                </button>
+            <% } %>
+        </section>
     </main>
 </body>
 
