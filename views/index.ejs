@@ -1,58 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Status Dashboard</title>
 
-    <!-- Tailwind CDN and custom styles -->
+    <!-- Tailwind CSS and custom styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <link rel="stylesheet" href="/css/styles.css">
 
     <!-- Favicon Links -->
     <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
     <link rel="manifest" href="/favicons/site.webmanifest">
 
     <!-- Custom style for the dot background -->
     <style>
         body, html {
-            overflow: hidden; /* Prevents scroll from appearing */
+            overflow: hidden;
         }
-
-        /* Canvas to hold animated dots */
         #backgroundCanvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1; /* Ensures it stays behind all content */
+            z-index: -1;
             background-color: #0e0e10;
         }
-
         .content-container {
-            z-index: 10; /* Ensures content is in front of the canvas */
+            z-index: 10;
         }
     </style>
 </head>
 
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body class="bg-gray-100 min-h-screen">
+
     <!-- Animated background canvas -->
     <canvas id="backgroundCanvas"></canvas>
 
-    <!-- Main content -->
-    <div class="content-container text-center max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Welcome to the Status Dashboard</h1>
-        <p class="text-gray-600 mb-6">Log in to manage server settings and moderation.</p>
-        
-        <!-- Login button with Discord OAuth URL -->
-        <a href="/auth/discord"
-           class="ios-button bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-full px-6 py-3 shadow-lg">
-           Login with Discord
+    <!-- Header with title and login button -->
+    <header class="content-container flex justify-between items-center p-6 bg-transparent text-white">
+        <h1 class="text-xl font-semibold">Status Dashboard</h1>
+        <a href="/auth/discord" class="ios-button bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-full px-4 py-2 shadow-lg">
+            Login with Discord
         </a>
-    </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="content-container flex flex-col items-center justify-center min-h-screen p-6 text-center space-y-16">
+        <!-- Welcome Section -->
+        <section class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Welcome to the Status Dashboard</h2>
+            <p class="text-gray-600 mb-6">Log in to manage server settings and moderation.</p>
+            <a href="/auth/discord" class="ios-button bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-full px-6 py-3 shadow-lg">
+                Login with Discord
+            </a>
+        </section>
+
+        <!-- About Section -->
+        <section class="max-w-3xl text-gray-200">
+            <h2 class="text-2xl font-semibold mb-4">About This Dashboard</h2>
+            <p class="mb-4">The Status Dashboard provides server admins and moderators with tools to manage and monitor their Discord servers effectively. With features for managing roles, viewing moderation logs, and handling user appeals, this platform empowers you to keep your community safe and organized.</p>
+            <a href="https://discord.gg/statusgame" class="text-blue-400 hover:text-blue-500 underline">Join Our Discord Server</a>
+        </section>
+    </main>
 
     <!-- Script for animated dots background -->
     <script>
@@ -64,13 +77,11 @@
         const dotRadius = 2.5;
         const dotSpeed = 0.2;
 
-        // Resize canvas to fill the screen
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         }
 
-        // Initialize dots with random positions and velocities
         function initializeDots() {
             dots = [];
             for (let i = 0; i < dotCount; i++) {
@@ -83,7 +94,6 @@
             }
         }
 
-        // Draw each dot
         function drawDots() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
@@ -94,33 +104,27 @@
             });
         }
 
-        // Update dot positions, with boundaries to keep dots within the viewport
         function updateDots() {
             dots.forEach(dot => {
                 dot.x += dot.vx;
                 dot.y += dot.vy;
-
-                // Bounce off edges
                 if (dot.x < 0 || dot.x > canvas.width) dot.vx *= -1;
                 if (dot.y < 0 || dot.y > canvas.height) dot.vy *= -1;
             });
         }
 
-        // Animation loop
         function animate() {
             drawDots();
             updateDots();
             requestAnimationFrame(animate);
         }
 
-        // Set up canvas and start animation on page load
         window.addEventListener('load', () => {
             resizeCanvas();
             initializeDots();
             animate();
         });
 
-        // Resize canvas and reinitialize dots on window resize
         window.addEventListener('resize', () => {
             resizeCanvas();
             initializeDots();
